@@ -1,0 +1,4 @@
+cmcgo
+venv
+__pycache__
+*.pyc

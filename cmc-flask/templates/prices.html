@@ -1,0 +1,18 @@
+<!doctype html>
+
+<table>
+  <tr>
+    <th>Symbol</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Last update</th>
+  </tr>
+  {% for c in currencies %}
+    <tr>
+      <td>{{ c.symbol }}</td>
+      <td>{{ c.name }}</td>
+      <td>{{ c.price }}</td>
+      <td>{{ c.time }}</td>
+    </tr>
+  {% endfor %}
+</table>
