@@ -1,0 +1,36 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cmc-postgres-deployment
+  labels:
+    app: cmc-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cmc-postgres
+  template:
+    metadata:
+      labels:
+        app: cmc-postgres
+    spec:
+      containers:
+      - image: postgres
+        imagePullPolicy: Always
+        name: cmc-postgres-server
+        env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/pgdata
+        envFrom:
+          - configMapRef:
+              name: cmc-postgres-config
+        ports:
+          - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: cmc-postgres-pvc
+      volumes:
+      - name: cmc-postgres-pvc
+        persistentVolumeClaim:
+          claimName: cmc-postgres-pvc

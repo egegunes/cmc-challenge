@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cmc-flask-deployment
+  labels:
+    app: cmc-flask
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cmc-flask
+  template:
+    metadata:
+      labels:
+        app: cmc-flask
+    spec:
+      containers:
+      - image: eu.gcr.io/kubernetes-222419/cmcflask
+        imagePullPolicy: Always
+        name: cmcflask
+        env:
+          - name: DBHOST
+            value: cmc-postgres-deployment.default.svc.cluster.local
+        envFrom:
+          - configMapRef:
+              name: cmc-postgres-config
+        ports:
+          - containerPort: 8000
+            protocol: TCP

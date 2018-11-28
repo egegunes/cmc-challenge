@@ -1,0 +1,28 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cmc-nginx
+  labels:
+    app: cmc-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cmc-nginx
+    spec:
+      volumes:
+        - name: nginx
+          configMap:
+            name: cmc-nginx-config
+      containers:
+        - name: nginx
+          image: nginx:1.14.1-alpine
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: nginx
+              mountPath: /etc/nginx
+              readOnly: true

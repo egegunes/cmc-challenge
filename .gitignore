@@ -2,3 +2,4 @@ cmcgo
 venv
 __pycache__
 *.pyc
+postgresql-config.yml

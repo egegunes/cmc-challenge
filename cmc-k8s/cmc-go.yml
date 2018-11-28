@@ -1,0 +1,20 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cmc-go
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cmcgo
+            image: eu.gcr.io/kubernetes-222419/cmcgo
+            env:
+              - name: DBHOST
+                value: cmc-postgres-deployment.default.svc.cluster.local
+            envFrom:
+              - configMapRef:
+                  name: cmc-postgres-config
+          restartPolicy: OnFailure
