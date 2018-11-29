@@ -11,6 +11,8 @@ import (
 
 	// loads postgresql drivers
 	_ "github.com/lib/pq"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/push"
 )
 
 type Response struct {
@@ -28,13 +30,19 @@ type Currency struct {
 
 const cmcUrl = "https://api.coinmarketcap.com/v2/ticker/?limit=10"
 
+var responseTime = prometheus.NewHistogram(prometheus.HistogramOpts{Name: "cmc_response_seconds"})
+
 func getCurrencies(c *http.Client) (map[string]Currency, error) {
+	timer := prometheus.NewTimer(responseTime)
+
 	resp, err := c.Get(cmcUrl)
 	if err != nil {
 		return nil, fmt.Errorf("can't get response: %v", err)
 	}
 
 	defer resp.Body.Close()
+
+	timer.ObserveDuration()
 
 	var r Response
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
@@ -64,6 +72,10 @@ func main() {
 	currencies, err := getCurrencies(c)
 	if err != nil {
 		log.Fatalf("can't get currencies: %v", err)
+	}
+
+	if err := push.New(os.Getenv("PUSHGATEWAY_HOST"), "cmcgo").Collector(responseTime).Push(); err != nil {
+		log.Fatalf("can't push metrics to PushGateway: %v", err)
 	}
 
 	conn := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",

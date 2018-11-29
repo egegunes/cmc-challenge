@@ -1,6 +1,6 @@
 FROM golang:1.11 as builder
 
-RUN go get github.com/lib/pq
+RUN go get github.com/lib/pq && go get github.com/prometheus/client_golang/prometheus && go get github.com/prometheus/client_golang/prometheus/push
 RUN mkdir -p /go/src/github.com/egegunes/cmcgo
 WORKDIR /go/src/github.com/egegunes/cmcgo
 COPY main.go .

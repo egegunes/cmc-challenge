@@ -14,6 +14,8 @@ spec:
             env:
               - name: DBHOST
                 value: cmc-postgres-deployment.default.svc.cluster.local
+              - name: PUSHGATEWAY_HOST
+                value: http://cmc-pushgateway-prometheus-pushgateway.default.svc.cluster.local:9091
             envFrom:
               - configMapRef:
                   name: cmc-postgres-config
